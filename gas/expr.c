@@ -343,10 +343,12 @@ integer_constant (int radix, expressionS *expressionP)
       maxdig = 2;
       too_many_digits = valuesize + 1;
       break;
+#ifdef TC_PROPELLER
     case 4:
       maxdig = radix = 4;
       too_many_digits = (valuesize + 1) / 2 + 1;
       break;
+#endif
     case 8:
       maxdig = radix = 8;
       too_many_digits = (valuesize + 2) / 3 + 1;
@@ -366,7 +368,11 @@ integer_constant (int radix, expressionS *expressionP)
 #if defined(IGNORE_UNDERSCORES_IN_INTEGER_CONSTANTS)
   number = 0;
   do {
-    while (c == '_') c = *input_line_pointer++;
+    while (c == '_')
+      {
+        c = *input_line_pointer++;
+        too_many_digits++;
+      }
     if (!c) break;
     digit = hex_value (c);
     if (digit >= maxdig) break;
@@ -801,7 +807,7 @@ operand (expressionS *expressionP, enum expr_mode mode)
         }
       else
 #endif
-      integer_constant (2, expressionP);
+        integer_constant (2, expressionP);
       break;
 #endif
 
