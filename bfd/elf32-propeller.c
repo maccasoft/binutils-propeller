@@ -1110,7 +1110,7 @@ propeller_elf_gc_keep (struct bfd_link_info *info)
   bfd *in;
   struct bfd_section *sec;
   /*
-    look for sections starting or ending with ".cog";
+    look for sections starting or ending with ".cog" or ".ecog";
     these should never be garbage collected
     (actually we could do even better and KEEP them only
     if the corresponding _load_start_xxx symbol is referenced,
@@ -1124,9 +1124,9 @@ propeller_elf_gc_keep (struct bfd_link_info *info)
 	  size_t namelen = strlen(name);
 	  int keep = 0;
 
-	  if (namelen > 4 && !strcmp(name+namelen-4, ".cog"))
+	  if ((namelen > 4 && !strcmp(name+namelen-4, ".cog")) || !strncmp(name, ".cog", 4))
 	    keep = 1;
-	  else if (!strncmp(name, ".cog", 4))
+	  else if ((namelen > 5 && !strcmp(name+namelen-5, ".ecog")) || !strncmp(name, ".ecog", 5))
 	    keep = 1;
 	  if (keep)
 	    sec->flags |= SEC_KEEP;
